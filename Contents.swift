@@ -32,3 +32,186 @@ class SpecificReceiver: Receiver
         // do something interesting.
     }
 }
+
+
+
+
+
+
+// BusinessRule Gateway Example
+protocol Item
+{
+    func makeChanges()
+}
+
+class Something: Item
+{
+    func makeChanges() {
+        // do something.
+    }
+}
+
+protocol BusinessRuleGateway
+{
+    func getSomething(id: String) -> Item
+    func startTransaction()
+    func saveSomething(thing: Item)
+    func endTransaction()
+}
+
+class MySqlBusinessRuleGateway: BusinessRuleGateway
+{
+    func getSomething(id: String) -> Item {
+        // use MySql to get a thing.
+        let thing = Something()
+        return thing
+    }
+    
+    func startTransaction() {
+        // start something
+    }
+    
+    func saveSomething(thing: Item) {
+        // save something.
+    }
+    
+    func endTransaction() {
+        // end transaction.
+    }
+}
+
+class BusinessRule
+{
+    private var gateway: BusinessRuleGateway
+    
+    init(gateway: BusinessRuleGateway)
+    {
+        self.gateway = gateway
+    }
+    
+    func execute(id: String)
+    {
+        gateway.startTransaction()
+        let thing = gateway.getSomething(id: id)
+        thing.makeChanges()
+        gateway.saveSomething(thing: thing)
+        gateway.endTransaction()
+    }
+}
+
+protocol Engine {
+    func forward(currentSpeed: Double) -> Double
+    func reverse()
+    func decelerate()
+}
+
+class RaceCarEngine: Engine {
+    let maxSpeed = 260.0
+    let rate = 20.0
+    let maxReverseSpeed = 35.0
+    let decelerationSpeed = 15.0
+    
+    func forward(currentSpeed: Double) -> Double {
+        return currentSpeed >= maxSpeed ? maxSpeed : Double(maxSpeed / rate) + currentSpeed
+    }
+    
+    func reverse() {
+        // go in reverese
+    }
+    
+    func decelerate() {
+        // slow down at given rate
+    }
+}
+
+class SportsCarEngine: Engine {
+    let maxSpeed = 200.0
+    let rate = 10.0
+    let maxReverseSpeed = 35.0
+    let decelerationSpeed = 8.0
+    
+    func forward(currentSpeed: Double) -> Double {
+        return currentSpeed >= maxSpeed ? maxSpeed : Double(maxSpeed / rate) + currentSpeed
+    }
+    
+    func reverse() {
+        // go in reverese
+    }
+    
+    func decelerate() {
+        // slow down at given rate
+    }
+}
+
+class Vehicle {
+    var engine: Engine
+    var carType: String
+    var currentSpeed = 0.0
+    
+    init(engine: Engine, carType: String) {
+        self.engine = engine
+        self.carType = carType
+    }
+    
+    func accelerate() {
+        currentSpeed = engine.forward(currentSpeed: currentSpeed)
+        print("\(carType)'s current speed: \(currentSpeed)")
+    }
+}
+
+let raceCar = Vehicle(engine: RaceCarEngine(), carType: "Race Car")
+raceCar.accelerate()
+raceCar.accelerate()
+raceCar.accelerate()
+raceCar.accelerate()
+raceCar.accelerate()
+raceCar.accelerate()
+raceCar.accelerate()
+raceCar.accelerate()
+raceCar.accelerate()
+raceCar.accelerate()
+raceCar.accelerate()
+raceCar.accelerate()
+raceCar.accelerate()
+raceCar.accelerate()
+raceCar.accelerate()
+raceCar.accelerate()
+raceCar.accelerate()
+raceCar.accelerate()
+raceCar.accelerate()
+raceCar.accelerate()
+raceCar.accelerate()
+raceCar.accelerate()
+raceCar.accelerate()
+raceCar.accelerate()
+raceCar.accelerate()
+raceCar.accelerate()
+
+print("\n\n\n\n")
+
+let sportsCar = Vehicle(engine: SportsCarEngine(), carType: "Sports Car")
+sportsCar.accelerate()
+sportsCar.accelerate()
+sportsCar.accelerate()
+sportsCar.accelerate()
+sportsCar.accelerate()
+sportsCar.accelerate()
+sportsCar.accelerate()
+sportsCar.accelerate()
+sportsCar.accelerate()
+sportsCar.accelerate()
+sportsCar.accelerate()
+sportsCar.accelerate()
+sportsCar.accelerate()
+sportsCar.accelerate()
+sportsCar.accelerate()
+sportsCar.accelerate()
+sportsCar.accelerate()
+sportsCar.accelerate()
+sportsCar.accelerate()
+sportsCar.accelerate()
+sportsCar.accelerate()
+sportsCar.accelerate()
+sportsCar.accelerate()
+sportsCar.accelerate()
+
