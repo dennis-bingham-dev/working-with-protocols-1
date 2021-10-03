@@ -121,7 +121,7 @@ class RaceCarEngine: Engine {
     let minSpeed = 0.0
     
     func forward(currentSpeed: Double) -> Double {
-        return currentSpeed >= maxSpeed ? maxSpeed : Double(maxSpeed / rate) + currentSpeed
+        return currentSpeed >= maxSpeed ? maxSpeed : rate + currentSpeed
     }
     
     func reverse() {
@@ -142,7 +142,7 @@ class SportsCarEngine: Engine {
     let minSpeed = 0.0
     
     func forward(currentSpeed: Double) -> Double {
-        return currentSpeed >= maxSpeed ? maxSpeed : Double(maxSpeed / rate) + currentSpeed
+        return currentSpeed >= maxSpeed ? maxSpeed : rate + currentSpeed
     }
     
     func reverse() {
