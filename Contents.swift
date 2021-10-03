@@ -1,7 +1,5 @@
 import UIKit
 
-var greeting = "Hello, playground"
-
 // Swift "equivalent" to an interface
 protocol Receiver
 {
@@ -102,14 +100,15 @@ class BusinessRule
 protocol Engine {
     func forward(currentSpeed: Double) -> Double
     func reverse()
-    func decelerate()
+    func decelerate(currentSpeed: Double) -> Double
 }
 
 class RaceCarEngine: Engine {
     let maxSpeed = 260.0
     let rate = 20.0
     let maxReverseSpeed = 35.0
-    let decelerationSpeed = 15.0
+    let decelerationSpeed = 30.0
+    let minSpeed = 0.0
     
     func forward(currentSpeed: Double) -> Double {
         return currentSpeed >= maxSpeed ? maxSpeed : Double(maxSpeed / rate) + currentSpeed
@@ -119,8 +118,9 @@ class RaceCarEngine: Engine {
         // go in reverese
     }
     
-    func decelerate() {
+    func decelerate(currentSpeed: Double) -> Double {
         // slow down at given rate
+        return currentSpeed <= minSpeed ? minSpeed : currentSpeed - Double(maxSpeed / decelerationSpeed)
     }
 }
 
@@ -128,7 +128,8 @@ class SportsCarEngine: Engine {
     let maxSpeed = 200.0
     let rate = 10.0
     let maxReverseSpeed = 35.0
-    let decelerationSpeed = 8.0
+    let decelerationSpeed = 20.0
+    let minSpeed = 0.0
     
     func forward(currentSpeed: Double) -> Double {
         return currentSpeed >= maxSpeed ? maxSpeed : Double(maxSpeed / rate) + currentSpeed
@@ -138,8 +139,9 @@ class SportsCarEngine: Engine {
         // go in reverese
     }
     
-    func decelerate() {
+    func decelerate(currentSpeed: Double) -> Double {
         // slow down at given rate
+        return currentSpeed <= minSpeed ? minSpeed : currentSpeed - Double(maxSpeed / decelerationSpeed)
     }
 }
 
@@ -147,6 +149,10 @@ class Vehicle {
     var engine: Engine
     var carType: String
     var currentSpeed = 0.0
+    var brakeApplied = false
+    var acceleratorApplied = false
+    
+    var timer = Timer()
     
     init(engine: Engine, carType: String) {
         self.engine = engine
@@ -154,64 +160,48 @@ class Vehicle {
     }
     
     func accelerate() {
-        currentSpeed = engine.forward(currentSpeed: currentSpeed)
-        print("\(carType)'s current speed: \(currentSpeed)")
+        self.acceleratorApplied = true
+        self.timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) {timer in
+            
+            if (self.brakeApplied) {
+                timer.invalidate()
+                self.acceleratorApplied = false
+            } else {
+                self.currentSpeed = self.engine.forward(currentSpeed: self.currentSpeed)
+                print("\(self.carType)'s current speed: \(self.currentSpeed)")
+            }
+        }
+    }
+    
+    func brake() {
+        self.brakeApplied = true
+        self.timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) {timer in
+            
+            if (self.acceleratorApplied == true) {
+                timer.invalidate()
+                self.brakeApplied = false
+            } else {
+                self.currentSpeed = self.engine.decelerate(currentSpeed: self.currentSpeed)
+                print("\(self.carType)'s current speed: \(self.currentSpeed)")
+            }
+        }
     }
 }
 
+var timeToSlowDown = 10
 let raceCar = Vehicle(engine: RaceCarEngine(), carType: "Race Car")
 raceCar.accelerate()
-raceCar.accelerate()
-raceCar.accelerate()
-raceCar.accelerate()
-raceCar.accelerate()
-raceCar.accelerate()
-raceCar.accelerate()
-raceCar.accelerate()
-raceCar.accelerate()
-raceCar.accelerate()
-raceCar.accelerate()
-raceCar.accelerate()
-raceCar.accelerate()
-raceCar.accelerate()
-raceCar.accelerate()
-raceCar.accelerate()
-raceCar.accelerate()
-raceCar.accelerate()
-raceCar.accelerate()
-raceCar.accelerate()
-raceCar.accelerate()
-raceCar.accelerate()
-raceCar.accelerate()
-raceCar.accelerate()
-raceCar.accelerate()
-raceCar.accelerate()
-
-print("\n\n\n\n")
 
 let sportsCar = Vehicle(engine: SportsCarEngine(), carType: "Sports Car")
 sportsCar.accelerate()
-sportsCar.accelerate()
-sportsCar.accelerate()
-sportsCar.accelerate()
-sportsCar.accelerate()
-sportsCar.accelerate()
-sportsCar.accelerate()
-sportsCar.accelerate()
-sportsCar.accelerate()
-sportsCar.accelerate()
-sportsCar.accelerate()
-sportsCar.accelerate()
-sportsCar.accelerate()
-sportsCar.accelerate()
-sportsCar.accelerate()
-sportsCar.accelerate()
-sportsCar.accelerate()
-sportsCar.accelerate()
-sportsCar.accelerate()
-sportsCar.accelerate()
-sportsCar.accelerate()
-sportsCar.accelerate()
-sportsCar.accelerate()
-sportsCar.accelerate()
+
+
+Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) {timer in
+    timeToSlowDown -= 1
+    if (timeToSlowDown == 0) {
+        print("\n\n\n\n\n")
+        raceCar.brake()
+        sportsCar.brake()
+    }
+}
 
