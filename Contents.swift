@@ -97,6 +97,16 @@ class BusinessRule
     }
 }
 
+
+
+
+
+
+
+
+/********************************************************************
+ * Car Engine Example just messing around with it
+ *************************************************************************/
 protocol Engine {
     func forward(currentSpeed: Double) -> Double
     func reverse()
